@@ -1,0 +1,8 @@
+OAOA · Biblioteca Digital — versión inicial
+
+1. Publica los archivos de esta carpeta en un repositorio de GitHub Pages.
+2. Añade las seis portadas originales como assets/portada-1.jpg ... portada-6.jpg.
+3. Edita libros.json: en url coloca las direcciones de los lectores digitales de 1.º, 2.º y 3.º.
+4. Los cursos 4.º–6.º permanecerán bloqueados hasta cambiar disponible a true y añadir su URL.
+5. El icono actual es un RECORTE PROVISIONAL de la mascota de la imagen aportada, sin redibujarla. Se puede mejorar cuando tengamos la ilustración aislada de buena calidad.
+6. Algunos lectores externos podrían impedir su visualización en iframe; en ese caso habrá que abrirlos en una pestaña.
