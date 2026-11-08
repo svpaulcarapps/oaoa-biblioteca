@@ -1,8 +1,80 @@
 [
-  {"curso":1,"disponible":true,"portada":"assets/portada-1.jpg","url":""},
-  {"curso":2,"disponible":true,"portada":"assets/portada-2.jpg","url":""},
-  {"curso":3,"disponible":true,"portada":"assets/portada-3.jpg","url":""},
-  {"curso":4,"disponible":false,"portada":"assets/portada-4.jpg","url":""},
-  {"curso":5,"disponible":false,"portada":"assets/portada-5.jpg","url":""},
-  {"curso":6,"disponible":false,"portada":"assets/portada-6.jpg","url":""}
+  {
+    "curso": 1,
+    "disponible": true,
+    "portada": "assets/portada-1.jpg",
+    "url": "https://script.google.com/macros/s/AKfycbyC_dO6NI_HqGnnK61iEUMHlN_ay_C05jc4ieIrznDcmabAlACcHlX_h956kBXfFt3yrQ/exec",
+    "encuadre": [
+      230,
+      485,
+      320,
+      451,
+      1100
+    ]
+  },
+  {
+    "curso": 2,
+    "disponible": true,
+    "portada": "assets/portada-2.jpg",
+    "url": "https://script.google.com/macros/s/AKfycbxY2KlnTlezlpssJEPQm6aHFMCHsakkzHea_s9YpG89vTlZCp8umeWtthsjxqCJ3i86MQ/exec",
+    "encuadre": [
+      252,
+      499,
+      286,
+      420,
+      1100
+    ]
+  },
+  {
+    "curso": 3,
+    "disponible": true,
+    "portada": "assets/portada-3.jpg",
+    "url": "https://script.google.com/macros/s/AKfycbzSRJiLlSqwyPx_TuDE21H2sVmbtHhggOG2WRQYpQdw5cwabB2qrV9rQyzggHKhCHC3ig/exec",
+    "encuadre": [
+      230,
+      490,
+      308,
+      435,
+      1100
+    ]
+  },
+  {
+    "curso": 4,
+    "disponible": false,
+    "portada": "assets/portada-4.jpg",
+    "url": "",
+    "encuadre": [
+      240,
+      499,
+      299,
+      427,
+      1100
+    ]
+  },
+  {
+    "curso": 5,
+    "disponible": false,
+    "portada": "assets/portada-5.jpg",
+    "url": "",
+    "encuadre": [
+      210,
+      480,
+      323,
+      458,
+      1100
+    ]
+  },
+  {
+    "curso": 6,
+    "disponible": false,
+    "portada": "assets/portada-6.jpg",
+    "url": "",
+    "encuadre": [
+      242,
+      499,
+      297,
+      421,
+      1100
+    ]
+  }
 ]

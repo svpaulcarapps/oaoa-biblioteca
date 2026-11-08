@@ -1,8 +1,10 @@
-OAOA · Biblioteca Digital — versión inicial
+OAOA · Biblioteca Digital
 
-1. Publica los archivos de esta carpeta en un repositorio de GitHub Pages.
-2. Añade las seis portadas originales como assets/portada-1.jpg ... portada-6.jpg.
-3. Edita libros.json: en url coloca las direcciones de los lectores digitales de 1.º, 2.º y 3.º.
-4. Los cursos 4.º–6.º permanecerán bloqueados hasta cambiar disponible a true y añadir su URL.
-5. El icono actual es un RECORTE PROVISIONAL de la mascota de la imagen aportada, sin redibujarla. Se puede mejorar cuando tengamos la ilustración aislada de buena calidad.
-6. Algunos lectores externos podrían impedir su visualización en iframe; en ese caso habrá que abrirlos en una pestaña.
+Seis portadas originales del catálogo de Ediciones Lifer: https://www.lifer.es/82_ediciones-lifer
+Las imágenes del catálogo se encuadran mediante CSS para mostrar únicamente la portada.
+
+libros.json configura los seis cursos: 1.º, 2.º y 3.º abren sus lectores existentes de Google Apps Script en la propia app. Para activar otro curso, añadir su url y cambiar disponible a true.
+Se conservan los permisos de los lectores. Google puede solicitar la cuenta del colegio. El botón «Abrir aparte» permite acceder directamente si el navegador bloquea la identificación dentro del lector integrado.
+
+El juego Rutas de Cálculo utiliza el enlace facilitado por el propietario y se abre en otra pestaña.
+Icono: San Vicente con regletas Cuisenaire, creado con imagegen siguiendo el estilo del compendio de apps.
