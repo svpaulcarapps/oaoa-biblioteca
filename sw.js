@@ -1,4 +1,4 @@
-const CACHE='oaoa-biblioteca-v2';
+const CACHE='oaoa-biblioteca-v3';
 const ASSETS=['./','./index.html','./libros.json','./manifest.webmanifest','./assets/icon-matematicas-192.png','./assets/icon-matematicas-512.png',...Array.from({length:6},(_,i)=>`./assets/portada-${i+1}.jpg`)];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)))});
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('oaoa-biblioteca-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
