@@ -67,9 +67,9 @@
   },
   {
     "curso": 6,
-    "disponible": false,
+    "disponible": true,
     "portada": "assets/portada-6.jpg",
-    "url": "",
+    "url": "https://script.google.com/a/macros/svpaulcar.es/s/AKfycbwURnPpX7pAo_EWX52l1kuvLmxAfLMFtQd4EGUVMuFLzf3kkZMoAk8rRf8WVKZu1kbqVA/exec",
     "encuadre": [
       242,
       499,
