@@ -1,0 +1,15 @@
+import {env} from 'cloudflare:workers';
+const encoder=new TextEncoder();
+export const normalizeName=(name:string)=>name.normalize('NFKC').toLocaleLowerCase('es').trim().replace(/\s+/g,' ');
+export const cleanName=(v:unknown)=>String(v||'').normalize('NFKC').trim().replace(/[<>\x00-\x1f]/g,'').replace(/\s+/g,' ').slice(0,24);
+export function equal(a:string,b:string){let diff=a.length^b.length;for(let i=0;i<Math.max(a.length,b.length);i++)diff|=(a.charCodeAt(i)||0)^(b.charCodeAt(i)||0);return diff===0}
+export async function digest(value:string){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',encoder.encode(value))),x=>x.toString(16).padStart(2,'0')).join('')}
+export function randomCode(bytes=12){return Array.from(crypto.getRandomValues(new Uint8Array(bytes)),x=>x.toString(16).padStart(2,'0')).join('')}
+export async function passwordHash(password:string,salt=randomCode(16)){const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);const result=await crypto.subtle.deriveBits({name:'PBKDF2',salt:encoder.encode(salt),iterations:100000,hash:'SHA-256'},key,256);return salt+':'+Array.from(new Uint8Array(result),x=>x.toString(16).padStart(2,'0')).join('')}
+export async function passwordMatches(password:string,stored:string){const [salt]=stored.split(':');return equal(await passwordHash(password,salt),stored)}
+export function sameOrigin(req:Request){const origin=req.headers.get('Origin');return !!origin&&origin===new URL(req.url).origin}
+export function cookie(req:Request,value:string,maxAge:number){return `oaoa_pupil=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${new URL(req.url).protocol==='https:'?'; Secure':''}`}
+export async function currentPupil(req:Request){const token=req.headers.get('Cookie')?.split(';').map(s=>s.trim()).find(s=>s.startsWith('oaoa_pupil='))?.slice(11);if(!token||!/^[a-f0-9]{64}$/.test(token))return null;return await env.DB!.prepare('SELECT a.id,a.code,a.username,a.name,a.room,a.avatar FROM pupil_accounts a JOIN pupil_sessions s ON s.account_id=a.id WHERE s.token_hash=? AND s.expires>?').bind(await digest(token),Date.now()).first() as any}
+export async function createSession(id:string){const token=randomCode(32);await env.DB!.prepare('INSERT INTO pupil_sessions(token_hash,account_id,expires) VALUES(?,?,?)').bind(await digest(token),id,Date.now()+7*86400000).run();return token}
+export async function throttle(req:Request,scope:string,limit:number){const ip=req.headers.get('CF-Connecting-IP')||'local';const key=await digest((env.ACCOUNTS_ADMIN_KEY||'local')+':'+scope+':'+ip);const now=Date.now();const result=await env.DB!.prepare('INSERT INTO account_attempts(key,count,expires) VALUES(?,1,?) ON CONFLICT(key) DO UPDATE SET count=CASE WHEN expires<=? THEN 1 ELSE count+1 END, expires=CASE WHEN expires<=? THEN excluded.expires ELSE expires END RETURNING count').bind(key,now+15*60000,now,now).first() as any;return result.count<=limit}
+export async function adminAllowed(req:Request){const key=req.headers.get('X-Accounts-Key')||'';return !!env.ACCOUNTS_ADMIN_KEY&&equal(key,env.ACCOUNTS_ADMIN_KEY)}
