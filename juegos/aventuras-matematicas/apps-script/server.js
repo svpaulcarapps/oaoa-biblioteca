@@ -1,5 +1,7 @@
 /* Apps Script server. Student backup is a separate PRIVATE file, never committed. */
 function doGet(){return HtmlService.createHtmlOutput(OAOA_CLIENT_HTML).setTitle('Aventuras matemáticas en San Vicente de Paúl').addMetaTag('viewport','width=device-width, initial-scale=1');}
+// Acceso desde la versión de GitHub Pages: misma API, sin cuenta de Google (POST anónimo).
+function doPost(e){var req=null;try{req=JSON.parse(e&&e.postData&&e.postData.contents||'null')}catch(err){}var r=oaoaRpc(req);return ContentService.createTextOutput(JSON.stringify(r)).setMimeType(ContentService.MimeType.JSON);}
 var TABLE_HEADERS_={math_runs:['id','name','room','mode','level','a','b','started','finished','points','seconds','day','account_id'],pupil_accounts:['id','code','username','name','name_key','room','password_hash','avatar','created'],pupil_sessions:['token_hash','account_id','expires'],account_attempts:['key','count','expires']};
 var tableCache_={},dbCache_;
 function bytes_(v){return new Uint8Array(Utilities.newBlob(String(v)).getBytes().map(function(n){return n&255}));}
