@@ -3,7 +3,7 @@ import {createTree,createClimb,setClimbStart,splitNode,mergeNodes,removeNodes,ci
 export const CLASSES=['1','2','3','4','5','6'].flatMap(g=>['A','B','C','D'].map(c=>g+c));
 export const RANK_GROUPS=['1','2','3','4','5','6',...CLASSES];
 export const MODES=['problems','add','subtract','climb','dresses','sacks','sackhunt','multiply'];
-export function scoreForTime(ms:number,level=1){const seconds=Math.max(0,Math.floor(ms/1000));const bonus=Math.max(0,50-Math.floor(seconds/3));const base=100*level;return {points:base+bonus,base,bonus,seconds};}
+export function scoreForTime(ms:number,level=1,mistakes=0){if(!Number.isSafeInteger(mistakes)||mistakes<0||mistakes>1000)throw Error('Recuento de intentos inválido.');const seconds=Math.max(0,Math.floor(ms/1000));const bonus=Math.max(0,50-Math.floor(seconds/3)),base=100*level,penalty=Math.min(base+bonus,mistakes*10);return {points:base+bonus-penalty,base,bonus,penalty,mistakes,seconds};}
 export function validateSolution(op:any,actions:any[]){
  if(op.mode==='problems')return checkWordSteps(op,actions,validateSolution);
  if(!Array.isArray(actions)||actions.length<1||actions.length>200)throw Error('La operación necesita pasos válidos.');

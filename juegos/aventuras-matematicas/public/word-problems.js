@@ -10,7 +10,7 @@ export function wordProblem(op){
 export const problemMethods=p=>p.operation==='add'?['add','dresses']:['subtract','climb'];
 export function checkWordDiagram(p,d){
  if(!d||!['parts','bars'].includes(d.model)||!Array.isArray(d.values)||d.values.length!==3)throw Error('Elige un modelo y completa las tres cantidades.');
- if(d.values.some((v,i)=>p.values[i]==='?'?String(v).trim()!=='?':!/^\d+$/.test(String(v).trim())||Number(v)!==p.values[i]))throw Error('Coloca los datos en sus casillas. Escribe ? en la cantidad que tenemos que averiguar.');
+ if(d.values.some((v,i)=>p.values[i]==='?'?String(v).trim()!=='?':!/^\d+$/.test(String(v).trim())||Number(v)!==p.values[i]))throw Error('Coloca solo los datos del enunciado y marca con ? lo que hay que averiguar. Todavía no tienes que calcularlo.');
  return true;
 }
 export function checkWordSteps(op,actions,validate){
@@ -25,6 +25,6 @@ export function checkWordSteps(op,actions,validate){
 }
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function wordDiagramHtml(p,model='parts',values=['','',''],readOnly=false){
- const box=i=>`<label class="word-quantity q${i}"><span>${esc(p.labels[i])}</span>${readOnly?`<strong>${esc(values[i])}</strong>`:`<input data-word-value="${i}" aria-label="${esc(p.labels[i])}" value="${esc(values[i])}" maxlength="5" autocomplete="off" placeholder="…">`}</label>`;
+ const box=i=>`<label class="word-quantity q${i}" data-word-slot="${i}"><span>${esc(p.labels[i])}</span>${readOnly?`<strong>${esc(values[i])}</strong>`:`<input data-word-value="${i}" aria-label="${esc(p.labels[i])}" value="${esc(values[i])}" ${values[i]==='?'?'readonly':''} inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Dato conocido"><button type="button" class="word-mark-unknown" data-word-unknown="${i}" aria-pressed="${values[i]==='?'}" aria-label="Marcar ${esc(p.labels[i])} como lo que hay que averiguar">${values[i]==='?'?'? Averiguar':'Marcar ?'}</button>`}</label>`;
  return `<div class="word-diagram ${model==='bars'?'word-bars':'word-parts'} ${p.kind==='compare'?'word-compare':''}" aria-label="Diagrama ${model==='bars'?'de barras':'partes y todo'}"><div class="word-total">${box(0)}</div><div class="word-links" aria-hidden="true"></div><div class="word-pair">${box(1)}${box(2)}</div></div>`;
 }

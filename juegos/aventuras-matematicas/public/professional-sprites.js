@@ -1,3 +1,4 @@
+import {costumeById} from './costumes.js';
 const BARE_SPRITES={summer:'/assets/art/feet-summer-v5.webp',formal:'/assets/art/feet-formal-v5.webp',summer2:'/assets/art/feet-summer2-v5.webp',formal2:'/assets/art/feet-formal2-v5.webp'};
 const SPRITES={summer:'/assets/pixel/avatars-summer-v4.webp',formal:'/assets/pixel/avatars-formal-v3.webp',summer2:'/assets/art/avatars-summer-v5.webp',formal2:'/assets/art/avatars-formal-v5.webp'};
 // Attachment landmarks are in the same 48 × 72 coordinate system as the avatar.
@@ -13,6 +14,8 @@ const n=v=>Number(v.toFixed(3));
 const move=(content,from,to,angle=0)=>`<g transform="translate(${to[0]} ${to[1]}) rotate(${angle}) translate(${-from[0]} ${-from[1]})">${content}</g>`;
 function limb(content,from,to,endFrom,endTo){const vx=endFrom[0]-from[0],vy=endFrom[1]-from[1],dx=endTo[0]-to[0],dy=endTo[1]-to[1],d=vx*vx+vy*vy,a=(dx*vx+dy*vy)/d,b=(dy*vx-dx*vy)/d;return `<g transform="matrix(${n(a)} ${n(b)} ${n(-b)} ${n(a)} ${n(to[0]-a*from[0]+b*from[1])} ${n(to[1]-b*from[0]-a*from[1])})">${content}</g>`}
 export function spriteFrames(a,layers={}){
+ const costume=costumeById(a.costume);if(costume)return completeCostumeFrames(a,costume);
+
  const extra=['curly','bob'].includes(a.character),uniform=(a.outfit===7?'formal':'summer')+(extra?'2':''),girl=['girl','bob'].includes(a.character),motion=a.motion||'still',row=(girl?4:0)+({still:0,jump:1,thumb:2,dance:3}[motion]||0),bare=a.equipment?.feet==='hobbitfeet',id='oaoa-sprites-'+uniform+(bare?'-bare':''),source=(bare?BARE_SPRITES:SPRITES)[uniform],uid='attachments-'+(++serial);
  if(typeof document!=='undefined'&&!document.getElementById(id)){let defs=document.getElementById('oaoa-sprite-defs');if(!defs){const holder=document.createElementNS('http://www.w3.org/2000/svg','svg');holder.setAttribute('aria-hidden','true');holder.style.cssText='position:absolute;width:0;height:0;overflow:hidden';holder.innerHTML='<defs id="oaoa-sprite-defs"></defs>';document.body.append(holder);defs=document.getElementById('oaoa-sprite-defs')}const image=document.createElementNS('http://www.w3.org/2000/svg','image');image.id=id;image.setAttribute('width','887');image.setAttribute('height','1774');image.setAttribute('href',window.OAOA_ASSETS?.[source]||source);defs.append(image)}
  const clips=[['left-foot',9,56,16,16],['right-foot',25,56,17,16],['torso',14,29,21,19],['left-arm',0,29,14,22],['right-arm',35,29,13,23],['left-leg',0,48,25,24],['right-leg',25,48,23,24]];
@@ -30,4 +33,10 @@ export function spriteFrames(a,layers={}){
  if(layers.face)pieces+=move(layers.face,[25,16.5],head);
  return `<g class="sprite-frame frame-${i}" data-pose="${motion}-${i}"><defs>${mask}</defs><g${holes?` mask="url(#${uid}-shoe-${i})"`:''}><svg x="-12" y="0" width="72" height="72" viewBox="${i*221.75} ${row*221.75} 221.75 221.75" overflow="hidden"><use href="#${id}"/></svg></g>${pieces}</g>`;
  }).join('');
+}
+
+function completeCostumeFrames(a,costume){
+ const id='oaoa-costume-'+costume.id,row=({still:0,jump:1,thumb:2,dance:3}[a.motion]||0);
+ if(typeof document!=='undefined'&&!document.getElementById(id)){let defs=document.getElementById('oaoa-sprite-defs');if(!defs){const holder=document.createElementNS('http://www.w3.org/2000/svg','svg');holder.setAttribute('aria-hidden','true');holder.style.cssText='position:absolute;width:0;height:0;overflow:hidden';holder.innerHTML='<defs id="oaoa-sprite-defs"></defs>';document.body.append(holder);defs=document.getElementById('oaoa-sprite-defs')}const image=document.createElementNS('http://www.w3.org/2000/svg','image');image.id=id;image.setAttribute('width','1536');image.setAttribute('height','1536');image.setAttribute('href',window.OAOA_ASSETS?.[costume.asset]||costume.asset);defs.append(image)}
+ return Array.from({length:4},(_,i)=>`<g class="sprite-frame frame-${i}" data-costume="${costume.id}" data-pose="${a.motion||'still'}-${i}"><svg x="-12" y="0" width="72" height="72" viewBox="${i*384} ${row*384} 384 384" overflow="hidden"><use href="#${id}"/></svg></g>`).join('');
 }

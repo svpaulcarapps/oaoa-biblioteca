@@ -14,7 +14,7 @@ css=css.replaceAll("url('/assets/","url('"+base+"/assets/").replaceAll('url("/as
 html=html.replace('<link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/pixel-theme.css">','<style>'+css+'</style>').replaceAll('src="/assets/','src="'+base+'/assets/').replaceAll('href="/assets/','href="'+base+'/assets/');
 const assetFiles={SpritesSport:['/assets/pixel/avatars-sports-v3.webp'],SpritesFormal:['/assets/pixel/avatars-formal-v3.webp'],SpritesSummer:['/assets/pixel/avatars-summer-v4.webp']};
 // Public artwork is versioned in the game's own GitHub repository. Student data remains private.
-const artAssets=Object.fromEntries(fs.readdirSync('public/assets/art').map(file=>['/assets/art/'+file,'https://svpaulcarapps.github.io/aventuras-matematicas/assets/art/'+file]));
+const artAssets=Object.fromEntries(['art','costumes'].flatMap(folder=>fs.readdirSync('public/assets/'+folder).map(file=>['/assets/'+folder+'/'+file,'https://svpaulcarapps.github.io/aventuras-matematicas/assets/'+folder+'/'+file])));
 const assets={};for(const names of Object.values(assetFiles))for(const name of names)assets[name]='data:image/webp;base64,'+fs.readFileSync('public'+name).toString('base64');
 
 const logo='data:image/webp;base64,'+fs.readFileSync('public/assets/art/oaoa-logo-v5.webp').toString('base64');html=html.replaceAll(base+'/assets/art/oaoa-logo-v5.webp',logo);
