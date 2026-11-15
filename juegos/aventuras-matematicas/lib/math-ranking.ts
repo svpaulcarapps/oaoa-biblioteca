@@ -1,9 +1,11 @@
+import {checkWordSteps} from '../public/word-problems.js';
 import {createTree,createClimb,setClimbStart,splitNode,mergeNodes,removeNodes,circleNode,finishTree,addJump,crossClimbStart,branchClimb,finishClimb,treeComplete,createDresses,dressRow,finishDresses,dressComplete,createSacks,estimateSack,joinSack,finishSack,createSackHunt,solveSackHunt,validateMultiplication} from '../public/engine.js';
 export const CLASSES=['1','2','3','4','5','6'].flatMap(g=>['A','B','C','D'].map(c=>g+c));
 export const RANK_GROUPS=['1','2','3','4','5','6',...CLASSES];
-export const MODES=['add','subtract','climb','dresses','sacks','sackhunt','multiply'];
+export const MODES=['problems','add','subtract','climb','dresses','sacks','sackhunt','multiply'];
 export function scoreForTime(ms:number,level=1){const seconds=Math.max(0,Math.floor(ms/1000));const bonus=Math.max(0,50-Math.floor(seconds/3));const base=100*level;return {points:base+bonus,base,bonus,seconds};}
 export function validateSolution(op:any,actions:any[]){
+ if(op.mode==='problems')return checkWordSteps(op,actions,validateSolution);
  if(!Array.isArray(actions)||actions.length<1||actions.length>200)throw Error('La operación necesita pasos válidos.');
  if(op.mode==='multiply')return validateMultiplication(op,actions);
  if(op.mode==='sackhunt'){let s=createSackHunt(op);for(const a of actions){if(a?.type!=='solveSackHunt')throw Error('Paso inválido.');s=solveSackHunt(s,a.ids)}if(!s.finished)throw Error('Completa el reto.');return true;}

@@ -1,6 +1,7 @@
+import {wordProblem} from './word-problems.js';
 export {validateMultiplication} from './multiplication.js';
 import {nextMultiplication,validMultiplicationSeed} from './multiplication.js';
-export const LABELS={add:'Suma en árbol',subtract:'Resta en árbol',climb:'Rocódromo',dresses:'Suma en vestidos',sacks:'Sacos de Paco',sackhunt:'Reto de Paco',multiply:'Problemas de multiplicación'};
+export const LABELS={problems:'Problemas de suma y resta',add:'Suma en árbol',subtract:'Resta en árbol',climb:'Rocódromo',dresses:'Suma en vestidos',sacks:'Sacos de Paco',sackhunt:'Reto de Paco',multiply:'Problemas de multiplicación'};
 export const sum=ns=>ns.reduce((a,b)=>a+b,0);
 export const isAddition=mode=>['add','dresses','sacks','sackhunt'].includes(mode);
 const integer=n=>Number.isInteger(n)&&n>=0;
@@ -14,7 +15,7 @@ export class OperationHistory{
  serialize(){const out={...this.saved};for(const [key,bits]of this.cache){let text='';for(let i=0;i<bits.length;i+=8192)text+=String.fromCharCode(...bits.subarray(i,i+8192));out[key]=btoa(text)}return out}
 }
 export const DIFFICULTIES=[{id:1,label:'Empiezo',digits:2},{id:2,label:'Avanzo',digits:2},{id:3,label:'Reto',digits:3},{id:4,label:'Experto',digits:3}];
-export function fitsDifficulty(mode,a,b,level){if(mode==='multiply')return validMultiplicationSeed(a,b,level);if(!level)return true;if(isAddition(mode)){const units=a%10+b%10,tens=Math.floor(a/10)%10+Math.floor(b/10)%10+(units>=10?1:0);return level===1?units<10:level===2?units>=10:level===3?true:units>=10&&tens>=10}if(mode==='climb')return level===1?a-b<=20:level===2?a-b>20:level===3?true:a-b>=100;return level===1?a%10>=b%10:level===2?a%10<b%10:level===3?true:a%100<b%100&&a%10<b%10}
+export function fitsDifficulty(mode,a,b,level){if(mode==='problems')return fitsDifficulty(wordProblem({a,b}).operation,a,b,level);if(mode==='multiply')return validMultiplicationSeed(a,b,level);if(!level)return true;if(isAddition(mode)){const units=a%10+b%10,tens=Math.floor(a/10)%10+Math.floor(b/10)%10+(units>=10?1:0);return level===1?units<10:level===2?units>=10:level===3?true:units>=10&&tens>=10}if(mode==='climb')return level===1?a-b<=20:level===2?a-b>20:level===3?true:a-b>=100;return level===1?a%10>=b%10:level===2?a%10<b%10:level===3?true:a%100<b%100&&a%10<b%10}
 export function nextOperation(mode,digits,history,difficulty){
  if(mode==='multiply')return nextMultiplication(history,difficulty);
  if(!Object.hasOwn(LABELS,mode)||![2,3].includes(digits))throw Error('Elige una ruta y un nivel.');

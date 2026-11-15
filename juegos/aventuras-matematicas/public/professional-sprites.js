@@ -1,6 +1,6 @@
-const SPRITES={sports:'/assets/pixel/avatars-sports-v3.webp',formal:'/assets/pixel/avatars-formal-v3.webp'};
+const SPRITES={summer:'/assets/pixel/avatars-summer-v4.webp',sports:'/assets/pixel/avatars-sports-v4.webp',formal:'/assets/pixel/avatars-formal-v3.webp'};
 export function spriteFrames(a,overlay=''){
- const uniform=a.outfit===7?'formal':'sports',girl=a.character==='girl',motion=a.motion||'still',row=(girl?4:0)+({still:0,jump:1,thumb:2,dance:3}[motion]||0),id='oaoa-sprites-'+uniform;
+ const uniform=a.outfit===7?'formal':'summer',girl=a.character==='girl',motion=a.motion||'still',row=(girl?4:0)+({still:0,jump:1,thumb:2,dance:3}[motion]||0),id='oaoa-sprites-'+uniform;
  if(typeof document!=='undefined'&&!document.getElementById(id)){let defs=document.getElementById('oaoa-sprite-defs');if(!defs){const holder=document.createElementNS('http://www.w3.org/2000/svg','svg');holder.setAttribute('aria-hidden','true');holder.style.cssText='position:absolute;width:0;height:0;overflow:hidden';holder.innerHTML='<defs id="oaoa-sprite-defs"></defs>';document.body.append(holder);defs=document.getElementById('oaoa-sprite-defs')}const image=document.createElementNS('http://www.w3.org/2000/svg','image');image.id=id;image.setAttribute('width','887');image.setAttribute('height','1774');image.setAttribute('href',window.OAOA_ASSETS?.[SPRITES[uniform]]||SPRITES[uniform]);defs.append(image)}
  return Array.from({length:4},(_,i)=>{const dx=motion==='jump'?[0,0,0,0][i]:0,dy=motion==='jump'?[10,-2,-4,10][i]:0;return `<g class="sprite-frame frame-${i}"><svg x="-12" y="0" width="72" height="72" viewBox="${i*221.75} ${row*221.75} 221.75 221.75" overflow="hidden"><use href="#${id}"/></svg><g transform="translate(${dx} ${dy})">${overlay}</g></g>`}).join('');
 }
