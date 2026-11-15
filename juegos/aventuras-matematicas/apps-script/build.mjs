@@ -19,7 +19,9 @@ const assets={};for(const names of Object.values(assetFiles))for(const name of n
 
 const logo='data:image/webp;base64,'+fs.readFileSync('public/assets/art/oaoa-logo-v5.webp').toString('base64');html=html.replaceAll(base+'/assets/art/oaoa-logo-v5.webp',logo);
 const bridge=`window.OAOA_ASSETS=${JSON.stringify(artAssets)};<?!= include_('SpritesSport') ?><?!= include_('SpritesFormal') ?><?!= include_('SpritesSummer') ?>(()=>{const nativeFetch=window.fetch.bind(window);window.fetch=(input,options={})=>{const url=typeof input==='string'?input:String(input);if(!url.startsWith('/api/'))return nativeFetch(input,options);const u=new URL(url,'https://oaoa.local');const query=Object.fromEntries(u.searchParams);let body=null;try{body=options.body?JSON.parse(options.body):null}catch{}const token=sessionStorage.getItem('oaoa-session')||'';return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(result=>{if(result.body&&Object.hasOwn(result.body,'sessionToken')){if(result.body.sessionToken)sessionStorage.setItem('oaoa-session',result.body.sessionToken);else sessionStorage.removeItem('oaoa-session');delete result.body.sessionToken}resolve(new Response(JSON.stringify(result.body),{status:result.status,headers:{'Content-Type':'application/json'}}))}).withFailureHandler(e=>reject(Error(e.message||'No se ha podido conectar con el juego.'))).oaoaRpc({path:u.pathname,method:options.method||'GET',query,body,headers:options.headers||{},token}))}})();`;
-const js=bridge+'\n'+client.outputFiles[0].text;
+// HtmlService may mistake URL slashes for a comment after SVG markup in a JS string.
+// Escaped slashes are equivalent JavaScript and keep the template parser in sync.
+const js=(bridge+'\n'+client.outputFiles[0].text).replaceAll('://',':\\/\\/');
 html=html.replace('<script type="module" src="/app.js"></script>',()=>'<script>'+js.replaceAll('</script','<\\/script')+'</script>');
 fs.writeFileSync(out+'/Index.html',html);
 fs.writeFileSync(out+'/appsscript.json',JSON.stringify({timeZone:'Europe/Madrid',dependencies:{},exceptionLogging:'STACKDRIVER',runtimeVersion:'V8',webapp:{executeAs:'USER_DEPLOYING',access:'ANYONE_ANONYMOUS'}},null,2));

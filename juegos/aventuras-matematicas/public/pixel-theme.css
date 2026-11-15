@@ -41,3 +41,5 @@ header{border:1px solid #c4daf2;border-radius:22px;background:#ffffffed;box-shad
 .hero-art.static-school-pair,.hero-art.static-school-pair img{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
 .hero-art.static-school-pair img{max-height:470px;object-fit:contain}
 .route{border:1px solid #c5d9ec!important}
+
+.avatar-preview .pupil-avatar,.pupil-celebration .pupil-avatar{overflow:visible}
