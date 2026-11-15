@@ -60,3 +60,5 @@ header{border:1px solid #c4daf2;border-radius:22px;background:#ffffffed;box-shad
 #record-status{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:18px 0;line-height:1.5}.teacher-panel .report-scroll table td{font-variant-numeric:tabular-nums}
 
 body{padding-bottom:80px}
+
+.hero.pixel-hero{position:relative;isolation:isolate;overflow:hidden}.hero.pixel-hero::before{content:'';position:absolute;inset:12px;background:url('/assets/art/hero-manipulatives-v9.webp') center/contain no-repeat;opacity:.3;pointer-events:none;z-index:0;border-radius:inherit}.hero.pixel-hero>.pixel-hero-copy,.hero.pixel-hero>.static-school-pair{position:relative;z-index:1}@media(max-width:700px){.hero.pixel-hero::before{inset:5px;background-size:760px auto;background-repeat:repeat-y;background-position:center top;opacity:.2}}

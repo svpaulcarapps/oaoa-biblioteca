@@ -10,6 +10,8 @@ const client=await esbuild.build({entryPoints:['public/app.js'],bundle:true,writ
 const route=fs.readFileSync('app/route.ts','utf8');let html=JSON.parse(route.slice('const html='.length,route.indexOf(';\n')));
 let css=fs.readFileSync('public/style.css','utf8')+'\n'+fs.readFileSync('public/pixel-theme.css','utf8');
 const base='https://rutas-de-calculo-oaoa.carlos-mercader-cone.chatgpt.site';
+// New game artwork is served from its versioned GitHub repository.
+css=css.replaceAll("url('/assets/art/","url('https://svpaulcarapps.github.io/aventuras-matematicas/assets/art/").replaceAll('url("/assets/art/','url("https://svpaulcarapps.github.io/aventuras-matematicas/assets/art/');
 css=css.replaceAll("url('/assets/","url('"+base+"/assets/").replaceAll('url("/assets/','url("'+base+'/assets/');
 html=html.replace('<link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/pixel-theme.css">','<style>'+css+'</style>').replaceAll('src="/assets/','src="'+base+'/assets/').replaceAll('href="/assets/','href="'+base+'/assets/');
 const assetFiles={SpritesSport:['/assets/pixel/avatars-sports-v3.webp'],SpritesFormal:['/assets/pixel/avatars-formal-v3.webp'],SpritesSummer:['/assets/pixel/avatars-summer-v4.webp']};
