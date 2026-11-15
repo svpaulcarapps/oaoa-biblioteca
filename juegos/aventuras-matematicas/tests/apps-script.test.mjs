@@ -37,3 +37,18 @@ const begun=call('/api/math',{action:'start',mode:'sacks',level:1,a:seed.a,b:see
 const scored=call('/api/math',{action:'finish',id:begun.body.id,actions:sack.actions,mistakes:2},{token:zeroToken});assert.equal(scored.status,200,JSON.stringify(scored.body));assert.equal(scored.body.penalty,20);assert.equal(scored.body.points,scored.body.base+scored.body.bonus-20);
 const repeated=call('/api/math',{action:'finish',id:begun.body.id,actions:sack.actions,mistakes:0},{token:zeroToken});assert.equal(repeated.body.points,scored.body.points);assert.equal(context.table_('math_runs').rows.slice(0,1402).reduce((s,r)=>s+Number(r.points||0),0),originalTotal);
 console.log('PASS: free Sonic at zero points; two failed attempts deduct 20; retries do not change saved points; historical scores preserved.');
+assert.equal(scored.body.coins,5);assert.equal(repeated.body.coins,5);
+assert.equal(call('/api/accounts',null,{token:zeroToken}).body.account.coins,5);
+assert.equal(context.coinBalance_(backup.tables.pupil_accounts[0].id),0);
+const sonic=context.OAOADeps.COSTUMES.find(c=>c.id==='hedgehog');sonic.coins=6;
+assert.equal(call('/api/accounts',{action:'buyCostume',costume:'hedgehog'},{token:zeroToken}).status,400);
+sonic.coins=5;
+const bought=call('/api/accounts',{action:'buyCostume',costume:'hedgehog'},{token:zeroToken});assert.equal(bought.status,200,JSON.stringify(bought.body));assert.equal(bought.body.coins,0);
+assert.equal(call('/api/accounts',{action:'buyCostume',costume:'hedgehog'},{token:zeroToken}).status,200);assert.equal(context.table_('costume_purchases').rows.length,1);
+sonic.coins=0;
+// Simulate pre-wallet schema and run the additive migration twice.
+const runSheet=ss.getSheetByName('math_runs'),coinCol=runSheet.values[0].indexOf('coins');runSheet.values.forEach(row=>row.splice(coinCol,1));sheets.splice(sheets.findIndex(s=>s.name==='costume_purchases'),1);
+context.prepararMonedasOaoa();context.prepararMonedasOaoa();context.tableCache_={};
+assert.equal(context.table_('math_runs').rows.slice(0,1402).reduce((n,r)=>n+Number(r.points||0),0),originalTotal);
+assert(context.table_('math_runs').rows.every(r=>Number(r.coins)===0));assert.equal(sheets.filter(s=>s.name==='costume_purchases').length,1);
+console.log('PASS: new run earns coins once; historical points earn no coins; insufficient funds rejected; purchase idempotent; additive migration preserves points.');

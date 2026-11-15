@@ -62,3 +62,11 @@ header{border:1px solid #c4daf2;border-radius:22px;background:#ffffffed;box-shad
 body{padding-bottom:80px}
 
 .hero.pixel-hero{position:relative;isolation:isolate;overflow:hidden}.hero.pixel-hero::before{content:'';position:absolute;inset:12px;background:url('/assets/art/hero-manipulatives-v9.webp') center/contain no-repeat;opacity:.3;pointer-events:none;z-index:0;border-radius:inherit}.hero.pixel-hero>.pixel-hero-copy,.hero.pixel-hero>.static-school-pair{position:relative;z-index:1}@media(max-width:700px){.hero.pixel-hero::before{inset:5px;background-size:760px auto;background-repeat:repeat-y;background-position:center top;opacity:.2}}
+
+/* Reserve a separate right margin: manipulatives never sit behind the pupils. */
+.hero.pixel-hero{padding-right:120px}
+.hero.pixel-hero::before{inset:18px 10px 18px auto;width:84px;background:url('/assets/art/hero-manipulatives-right-v10.webp') center/contain no-repeat;opacity:.7}
+.coin-wallet{font-weight:800;font-size:1.25rem;color:#174d83}
+.variant-pending{display:grid;place-items:center;min-height:155px;padding:16px;font-size:1rem}
+.costume-choice:disabled{opacity:.6;cursor:default}
+@media(max-width:700px){.hero.pixel-hero{padding-right:26px}.hero.pixel-hero::before{inset:20px 8px auto auto;width:40px;height:240px;background-size:contain;opacity:.35}.hero.pixel-hero .hero-copy{padding-right:25px}}
