@@ -5,6 +5,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+// Bust browser caches for the changed editor modules and interface styles.
+const VERSION = '20261115-characters-v6';
+const versionScripts = text => text.replace(/(['"])(\.\/(?:app|accounts-ui|avatar)\.js)\1/g, (m,q,file)=>q+file+'?v='+VERSION+q);
+
 const API = 'https://script.google.com/macros/s/AKfycbzmig6AICLgEwQEpHXZt1Mkgc3opXDwvyDG1hSLKZMzZMzZqyf4ALBCoiL9AyapN4YC/exec';
 // Recursos pesados que todavía no están en el repositorio (fuentes y fondos).
 const REMOTE = 'https://rutas-de-calculo-oaoa.carlos-mercader-cone.chatgpt.site/assets/';
@@ -19,7 +23,7 @@ const fix = text => text.replace(/(['"(])\/assets\/([^'")]+)/g, (m, q, file) =>
 
 for (const f of fs.readdirSync('public')) {
   if (!/\.(js|css)$/.test(f)) continue;
-  fs.writeFileSync(out + '/' + f, fix(fs.readFileSync('public/' + f, 'utf8')));
+  fs.writeFileSync(out + '/' + f, versionScripts(fix(fs.readFileSync('public/' + f, 'utf8'))));
 }
 for(const f of local){fs.mkdirSync(path.dirname(out+'/assets/'+f),{recursive:true});fs.copyFileSync('public/assets/'+f,out+'/assets/'+f)}
 
@@ -28,7 +32,7 @@ const bridge = `<script>window.OAOA_ASSETS={};(()=>{const API=${JSON.stringify(A
 fs.writeFileSync(out+'/manifest.webmanifest',JSON.stringify({name:'Aventuras matemáticas · San Vicente de Paúl',short_name:'Aventuras OAOA',start_url:'./',scope:'./',display:'standalone',background_color:'#eef5fc',theme_color:'#14539c',lang:'es',icons:[192,512].map(n=>({src:'assets/art/app-icon-'+n+'.png',sizes:n+'x'+n,type:'image/png'}))},null,2));
 const route = fs.readFileSync('app/route.ts', 'utf8');
 let html = JSON.parse(route.slice('const html='.length, route.indexOf(';\n')));
-html=fix(html).replace('href="/style.css"','href="style.css"').replace('href="/pixel-theme.css"','href="pixel-theme.css"').replace('</head>','<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="assets/art/app-icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Aventuras OAOA"></head>').replace('<script type="module" src="/app.js"></script>',()=>bridge+'<script type="module" src="app.js"></script>');
-if (!html.includes('src="app.js"')) throw Error('No se encontró el script principal en la plantilla');
+html=fix(html).replace('href="/style.css"','href="style.css?v='+VERSION+'"').replace('href="/pixel-theme.css"','href="pixel-theme.css?v='+VERSION+'"').replace('</head>','<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="assets/art/app-icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Aventuras OAOA"></head>').replace('<script type="module" src="/app.js"></script>',()=>bridge+'<script type="module" src="app.js?v='+VERSION+'"></script>');
+if (!html.includes('src="app.js?v=')) throw Error('No se encontró el script principal en la plantilla');
 fs.writeFileSync(out + '/index.html', html);
 console.log('Generado en', out, fs.readdirSync(out));
