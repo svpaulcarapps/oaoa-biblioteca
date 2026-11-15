@@ -43,3 +43,5 @@ header{border:1px solid #c4daf2;border-radius:22px;background:#ffffffed;box-shad
 .route{border:1px solid #c5d9ec!important}
 
 .avatar-preview .pupil-avatar,.pupil-celebration .pupil-avatar{overflow:visible}
+
+.character-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.character-choice{display:grid;justify-items:center;gap:8px;min-width:0;padding:16px;border:2px solid #bfd4e9;border-radius:18px;background:#fff;color:#173e68;cursor:pointer}.character-choice:hover{border-color:#498ed4;background:#f1f8ff}.character-choice[aria-pressed=true]{border-color:#bc8d20;background:#fff5d8;box-shadow:0 0 0 2px #f4d06c}.character-choice .pupil-avatar{width:88px;height:132px;overflow:visible}.character-choice .sprite-frame{animation:none;opacity:0}.character-choice .frame-0{opacity:1}.character-choice span{font-size:17px;font-weight:800}.character-choice small{font-size:13px;color:#53718d}.character-choice:focus-visible{outline:3px solid #2674c4;outline-offset:3px}@media(max-width:480px){.character-choices{gap:10px}.character-choice{padding:13px 8px}.character-choice .pupil-avatar{width:72px;height:108px}.character-choice span{font-size:15px}}
