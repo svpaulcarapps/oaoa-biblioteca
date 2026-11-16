@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 // Bust browser caches for the changed editor modules and interface styles.
-const VERSION = '20261115-classroom-v10';
+const VERSION = '20261116-accounts-v11';
 const versionScripts = text => text.replace(/(['"])(\.\/[^'"]+\.js)\1/g, (m,q,file)=>q+file+'?v='+VERSION+q);
 
 const API = 'https://script.google.com/macros/s/AKfycbzmig6AICLgEwQEpHXZt1Mkgc3opXDwvyDG1hSLKZMzZMzZqyf4ALBCoiL9AyapN4YC/exec';
@@ -36,3 +36,4 @@ html=fix(html).replace('href="/style.css"','href="style.css?v='+VERSION+'"').rep
 if (!html.includes('src="app.js?v=')) throw Error('No se encontró el script principal en la plantilla');
 fs.writeFileSync(out + '/index.html', html);
 console.log('Generado en', out, fs.readdirSync(out));
+
