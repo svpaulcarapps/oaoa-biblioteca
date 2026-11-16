@@ -8,12 +8,12 @@ let server=fs.readFileSync('apps-script/server.js','utf8').replace('HtmlService.
 fs.writeFileSync(out+'/Code.gs',deps.outputFiles[0].text+'\n'+server+"\nfunction include_(name){return HtmlService.createHtmlOutputFromFile(name).getContent();}\n");
 const client=await esbuild.build({entryPoints:['public/app.js'],bundle:true,write:false,format:'iife',platform:'browser',target:'es2020'});
 const route=fs.readFileSync('app/route.ts','utf8');let html=JSON.parse(route.slice('const html='.length,route.indexOf(';\n')));
-let css=fs.readFileSync('public/style.css','utf8')+'\n'+fs.readFileSync('public/pixel-theme.css','utf8');
+let css=fs.readFileSync('public/style.css','utf8')+'\n'+fs.readFileSync('public/pixel-theme.css','utf8')+'\n'+fs.readFileSync('public/geoboard.css','utf8');
 const base='https://rutas-de-calculo-oaoa.carlos-mercader-cone.chatgpt.site';
 // New game artwork is served from its versioned GitHub repository.
 css=css.replaceAll("url('/assets/art/","url('https://svpaulcarapps.github.io/aventuras-matematicas/assets/art/").replaceAll('url("/assets/art/','url("https://svpaulcarapps.github.io/aventuras-matematicas/assets/art/');
 css=css.replaceAll("url('/assets/","url('"+base+"/assets/").replaceAll('url("/assets/','url("'+base+'/assets/');
-html=html.replace('<link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/pixel-theme.css">','<style>'+css+'</style>').replaceAll('src="/assets/','src="'+base+'/assets/').replaceAll('href="/assets/','href="'+base+'/assets/');
+html=html.replace('<link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/pixel-theme.css"><link rel="stylesheet" href="/geoboard.css">','<style>'+css+'</style>').replaceAll('src="/assets/','src="'+base+'/assets/').replaceAll('href="/assets/','href="'+base+'/assets/');
 const assetFiles={SpritesSport:['/assets/pixel/avatars-sports-v3.webp'],SpritesFormal:['/assets/pixel/avatars-formal-v3.webp'],SpritesSummer:['/assets/pixel/avatars-summer-v4.webp']};
 // Public artwork is versioned in the game's own GitHub repository. Student data remains private.
 const artAssets=Object.fromEntries(['art','costumes'].flatMap(folder=>fs.readdirSync('public/assets/'+folder).map(file=>['/assets/'+folder+'/'+file,'https://svpaulcarapps.github.io/aventuras-matematicas/assets/'+folder+'/'+file])));
@@ -30,3 +30,4 @@ fs.writeFileSync(out+'/appsscript.json',JSON.stringify({timeZone:'Europe/Madrid'
 for(const [file,names] of Object.entries(assetFiles))fs.writeFileSync(out+'/'+file+'.html',names.map(name=>'window.OAOA_ASSETS['+JSON.stringify(name)+']='+JSON.stringify(assets[name])+';').join('\n'));
 for(const file of ['Code.gs','Index.html','SpritesSport.html','SpritesFormal.html','SpritesSummer.html']){fs.writeFileSync(out+'/transfer-'+file+'.html','<!doctype html><meta charset="utf-8"><title>Transferir '+file+'</title><h1>'+file+'</h1><p>Código preparado para el proyecto JUEGOS OAOA.</p><button onclick="document.querySelector(\'textarea\').hidden=false">Ver código preparado</button><textarea aria-label="Código preparado" style="width:95vw;height:75vh" hidden>'+fs.readFileSync(out+'/'+file,'utf8').replaceAll('&','&amp;').replaceAll('<','&lt;')+'</textarea>')}
 console.log(JSON.stringify({out,codeBytes:fs.statSync(out+'/Code.gs').size,htmlBytes:fs.statSync(out+'/Index.html').size}));
+

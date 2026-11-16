@@ -3,7 +3,7 @@ import fs from 'node:fs';import ts from 'typescript';
 import {wordProblem,problemMethods,checkWordDiagram,checkWordSteps} from '../public/word-problems.js';
 import {nextOperation,OperationHistory,createTree,splitNode,mergeNodes,activeNodes,removeNodes,finishTree,createClimb,setClimbStart,addJump,crossClimbStart,branchClimb,finishClimb,createDresses,dressRow,finishDresses} from '../public/engine.js';
 let code=ts.transpileModule(fs.readFileSync('lib/math-ranking.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
-for(const name of ['engine','word-problems'])code=code.replace('../public/'+name+'.js',new URL('../public/'+name+'.js',import.meta.url).href);
+for(const name of ['engine','word-problems','geoboard'])code=code.replace('../public/'+name+'.js',new URL('../public/'+name+'.js',import.meta.url).href);
 const {validateSolution,rankingQuery}=await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'));
 const kinds=new Set();let count=0;
 for(let level=1;level<=4;level++)for(let n=0;n<35;n++){
@@ -21,3 +21,4 @@ for(let level=1;level<=4;level++)for(let n=0;n<35;n++){
 }
 assert.deepEqual([...kinds].sort(),['compare','join','missing']);assert(rankingQuery(new URLSearchParams('mode=problems')).values.includes('problems'));
 console.log('PASS',count,'complete word-problem strategies, four levels, three relationships, wrong/missing steps rejected, ranking filter.');
+

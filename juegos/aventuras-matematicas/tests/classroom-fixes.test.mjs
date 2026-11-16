@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';import fs from 'node:fs';import ts from 
 import {packRods,rodsOverlap,rodPositionFree,findRodPosition} from '../public/rod-layout.js';
 import {wordProblem,checkWordDiagram} from '../public/word-problems.js';
 import {validAvatar,DEFAULT_AVATAR,avatarSvg} from '../public/avatar.js';
-let source=ts.transpileModule(fs.readFileSync('lib/math-ranking.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;for(const name of ['engine','word-problems'])source=source.replace('../public/'+name+'.js',new URL('../public/'+name+'.js',import.meta.url).href);const {scoreForTime,validateSolution}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+let source=ts.transpileModule(fs.readFileSync('lib/math-ranking.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;for(const name of ['engine','word-problems','geoboard'])source=source.replace('../public/'+name+'.js',new URL('../public/'+name+'.js',import.meta.url).href);const {scoreForTime,validateSolution}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
 for(const level of [1,2,3,4]){assert.equal(scoreForTime(3000,level,2).points,scoreForTime(3000,level,0).points-20);assert.equal(scoreForTime(3000,level,1000).points,0);}assert.throws(()=>scoreForTime(3000,1,-1));assert.throws(()=>scoreForTime(3000,1,1.5));
 const p=wordProblem({a:25,b:15});assert(checkWordDiagram(p,{model:'parts',values:['?',25,15]}));assert.throws(()=>checkWordDiagram(p,{model:'bars',values:[40,25,15]}));
 const rods=packRods(Array.from({length:200},(_,id)=>({id,size:10,x:0,y:0,vertical:false})),480);for(let i=0;i<rods.length;i++){assert(rodPositionFree(rods[i],rods,480,4096));for(let j=i+1;j<rods.length;j++)assert(!rodsOverlap(rods[i],rods[j]));}assert(!rodsOverlap({id:1,size:2,x:0,y:0},{id:2,size:3,x:32,y:0}));const turned=findRodPosition({...rods[0],vertical:true},rods,480);assert(turned&&rodPositionFree(turned,rods,480,4096));
@@ -12,3 +12,4 @@ for(const character of ['boy','girl','curly','bob'])for(const motion of ['still'
 assert(!validAvatar({...DEFAULT_AVATAR,character:'girl',costume:'electric'},0));
 const preserved=avatarSvg({...DEFAULT_AVATAR,character:'curly',costume:'electric'});assert(!preserved.includes('data-costume'));assert(preserved.includes('#oaoa-sprites-summer2'));assert(!preserved.includes('#oaoa-sprites-summer0'));
 console.log('PASS: all four Sonic identities retain their own atlas across four animations; missing variants never replace the face.');
+

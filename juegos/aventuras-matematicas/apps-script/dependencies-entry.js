@@ -9,3 +9,6 @@ export {validAvatar,DEFAULT_AVATAR} from '../public/avatar.js';
 export {SCHOOLS,DEFAULT_SCHOOL} from '../public/schools.js';
 
 export {COSTUMES,costumeById} from '../public/costumes.js';
+
+
+export {geoboardChallenge,validateGeoboard} from '../public/geoboard.js';

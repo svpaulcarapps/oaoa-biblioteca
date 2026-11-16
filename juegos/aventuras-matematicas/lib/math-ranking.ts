@@ -1,10 +1,12 @@
+import {validateGeoboard} from '../public/geoboard.js';
 import {checkWordSteps} from '../public/word-problems.js';
 import {createTree,createClimb,setClimbStart,splitNode,mergeNodes,removeNodes,circleNode,finishTree,addJump,crossClimbStart,branchClimb,finishClimb,treeComplete,createDresses,dressRow,finishDresses,dressComplete,createSacks,estimateSack,joinSack,finishSack,createSackHunt,solveSackHunt,validateMultiplication} from '../public/engine.js';
 export const CLASSES=['1','2','3','4','5','6'].flatMap(g=>['A','B','C','D'].map(c=>g+c));
 export const RANK_GROUPS=['1','2','3','4','5','6',...CLASSES];
-export const MODES=['problems','add','subtract','climb','dresses','sacks','sackhunt','multiply'];
+export const MODES=['problems','add','subtract','climb','dresses','sacks','sackhunt','multiply','geoboard'];
 export function scoreForTime(ms:number,level=1,mistakes=0){if(!Number.isSafeInteger(mistakes)||mistakes<0||mistakes>1000)throw Error('Recuento de intentos inválido.');const seconds=Math.max(0,Math.floor(ms/1000));const bonus=Math.max(0,50-Math.floor(seconds/3)),base=100*level,penalty=Math.min(base+bonus,mistakes*10);return {points:base+bonus-penalty,base,bonus,penalty,mistakes,seconds};}
 export function validateSolution(op:any,actions:any[]){
+ if(op.mode==='geoboard')return validateGeoboard(op,actions);
  if(op.mode==='problems')return checkWordSteps(op,actions,validateSolution);
  if(!Array.isArray(actions)||actions.length<1||actions.length>200)throw Error('La operación necesita pasos válidos.');
  if(op.mode==='multiply')return validateMultiplication(op,actions);
@@ -27,3 +29,4 @@ export function rankingQuery(params:URLSearchParams){
  if(level!=='all'){where.push('level=?');values.push(Number(level))}
  return {sql:'SELECT math_runs.name,math_runs.room,pupil_accounts.avatar,pupil_accounts.code,SUM(points) AS points,COUNT(*) AS operations,ROUND(AVG(seconds)) AS seconds FROM math_runs LEFT JOIN pupil_accounts ON pupil_accounts.id=math_runs.account_id WHERE '+where.join(' AND ')+' GROUP BY math_runs.room,COALESCE(math_runs.account_id,lower(math_runs.name)),math_runs.account_id ORDER BY points DESC,operations DESC,seconds ASC,math_runs.name ASC LIMIT 100',values};
 }
+

@@ -1,7 +1,7 @@
 import {wordProblem} from './word-problems.js';
 export {validateMultiplication} from './multiplication.js';
 import {nextMultiplication,validMultiplicationSeed} from './multiplication.js';
-export const LABELS={problems:'Problemas de suma y resta',add:'Suma en árbol',subtract:'Resta en árbol',climb:'Rocódromo',dresses:'Suma en vestidos',sacks:'Sacos de Paco',sackhunt:'Reto de Paco',multiply:'Problemas de multiplicación'};
+export const LABELS={problems:'Problemas de suma y resta',add:'Suma en árbol',subtract:'Resta en árbol',climb:'Rocódromo',dresses:'Suma en vestidos',sacks:'Sacos de Paco',sackhunt:'Reto de Paco',multiply:'Problemas de multiplicación',geoboard:'El geoplano'};
 export const sum=ns=>ns.reduce((a,b)=>a+b,0);
 export const isAddition=mode=>['add','dresses','sacks','sackhunt'].includes(mode);
 const integer=n=>Number.isInteger(n)&&n>=0;
@@ -30,7 +30,35 @@ export function createTree(op){return {op,nodes:op.mode==='add'?[node(0,op.a,260
 export const activeNodes=s=>s.nodes.filter(n=>n.active);
 function getNodes(s,ids){const ns=ids.map(id=>s.nodes.find(n=>n.id===id&&n.active));if(!ids.length||new Set(ids).size!==ids.length||ns.some(n=>!n))throw Error('Selecciona los números activos con los que quieres trabajar.');return ns}
 function place(s,x,y){return {x:Math.max(55,Math.min(845,x)),y}}
-export function alignTree(state){const s=copy(state),depth=new Map(),rows=new Map();for(const n of s.nodes){const ps=s.edges.filter(e=>e[1]===n.id).map(e=>depth.get(e[0])||0);const d=ps.length?Math.max(...ps)+1:0;depth.set(n.id,d);n.y=65+d*120;if(!rows.has(d))rows.set(d,[]);rows.get(d).push(n)}for(const [d,ns]of rows){for(const n of ns){const parents=s.edges.filter(e=>e[1]===n.id).map(e=>s.nodes.find(p=>p.id===e[0]));if(parents.length>1)n.x=sum(parents.map(p=>p.x))/parents.length;else if(parents.length===1){const siblings=s.edges.filter(e=>e[0]===parents[0].id).map(e=>e[1]);n.x=parents[0].x+(siblings.indexOf(n.id)-(siblings.length-1)/2)*150}}ns.sort((a,b)=>a.x-b.x||a.id-b.id);for(let i=1;i<ns.length;i++)ns[i].x=Math.max(ns[i].x,ns[i-1].x+120);const over=Math.max(0,ns.at(-1).x-845);if(over)ns.forEach(n=>n.x-=over);if(ns[0].x<55)ns.forEach((n,i)=>n.x=55+i*790/Math.max(1,ns.length-1))}return s}
+// A row may grow wider than the viewport. Never squeeze branches into a fixed canvas.
+export const TREE_NODE_GAP=160;
+export function alignTree(state){
+ const s=copy(state),byId=new Map(s.nodes.map(n=>[n.id,n])),parents=new Map(s.nodes.map(n=>[n.id,[]])),children=new Map(s.nodes.map(n=>[n.id,[]])),depth=new Map(),rows=new Map();
+ for(const [p,c] of s.edges){parents.get(c).push(byId.get(p));children.get(p).push(byId.get(c))}
+ for(const n of s.nodes){const ps=parents.get(n.id),d=ps.length?Math.max(...ps.map(p=>depth.get(p.id)))+1:0;depth.set(n.id,d);n.y=65+d*120;if(!rows.has(d))rows.set(d,[]);rows.get(d).push(n)}
+ for(const ns of rows.values()){
+  const groups=new Map();
+  for(const n of ns){const ps=parents.get(n.id),key=ps.length===1?'split:'+ps[0].id:'node:'+n.id;if(!groups.has(key))groups.set(key,{nodes:[],center:ps.length?sum(ps.map(p=>p.x))/ps.length:n.x});groups.get(key).nodes.push(n)}
+  const ordered=[...groups.values()].sort((a,b)=>a.center-b.center||a.nodes[0].id-b.nodes[0].id);let end=-Infinity;
+  for(const group of ordered){const ns=group.nodes;ns.sort((a,b)=>a.id-b.id);const left=Math.max(65,group.center-(ns.length-1)*TREE_NODE_GAP/2,end+TREE_NODE_GAP);ns.forEach((n,i)=>n.x=left+i*TREE_NODE_GAP);end=ns.at(-1).x;}
+ }
+ return s;
+}
+export function treeNodeX(state,id,wanted){
+ const node=state.nodes.find(n=>n.id===id),others=state.nodes.filter(n=>n.id!==id&&Math.abs(n.y-node.y)<70),target=Math.max(65,wanted);
+ return [target,65,...others.flatMap(n=>[n.x-TREE_NODE_GAP,n.x+TREE_NODE_GAP])].filter(x=>x>=65&&others.every(n=>Math.abs(n.x-x)>=TREE_NODE_GAP)).sort((a,b)=>Math.abs(a-target)-Math.abs(b-target)||a-b)[0]??Math.max(65,...others.map(n=>n.x+TREE_NODE_GAP));
+}
+export function treeBranchSigns(state){
+ const signs=[],placed=new Set();
+ for(const parent of state.nodes){const children=state.edges.filter(e=>e[0]===parent.id).map(e=>state.nodes.find(n=>n.id===e[1])).sort((a,b)=>a.x-b.x);
+  for(let i=1;i<children.length;i++){
+   const a=children[i-1],b=children[i];if(Math.abs(a.y-b.y)>45)continue;const y=(a.y+b.y)/2,row=state.nodes.filter(n=>Math.abs(n.y-y)<65).sort((a,b)=>a.x-b.x),mid=(a.x+b.x)/2;
+   const candidates=[mid,...row.slice(1).map((n,j)=>(row[j].x+n.x)/2)].filter(x=>x>a.x&&x<b.x&&row.every(n=>Math.abs(n.x-x)>=72)&&signs.every(sign=>Math.abs(sign.y-y)>45||Math.abs(sign.x-x)>=35));
+   candidates.sort((x,z)=>Math.abs(x-mid)-Math.abs(z-mid));if(!candidates.length)continue;const x=candidates[0],key=x+':'+y;if(!placed.has(key)){placed.add(key);signs.push({x,y})}
+  }
+ }
+ return signs;
+}
 export function splitNode(state,id,values){const s=copy(state),[parent]=getNodes(s,[id]);if(values.length<2||values.length>6||values.some(n=>!integer(n)))throw Error('Escribe entre dos y seis cantidades enteras, sin números negativos.');if(!parent.value)throw Error('El cero ya no necesita más ramas.');if(sum(values)!==parent.value)throw Error(`Las ramas deben sumar ${parent.value}. Ahora suman ${sum(values)}.`);if(values.some(v=>v===parent.value))throw Error('Prueba una descomposición que reparta la cantidad en partes más pequeñas.');parent.active=false;parent.circled=s.op.mode==='subtract';s.splits++;values.forEach((v,i)=>{const pos=place(s,parent.x+(i-(values.length-1)/2)*145,parent.y+110),n=node(s.serial++,v,pos.x,pos.y);s.nodes.push(n);s.edges.push([parent.id,n.id])});s.log.push(`${parent.value} = ${values.join(' + ')}`);s.actions.push({type:'split',id,values});return alignTree(s)}
 export function mergeNodes(state,ids,answer){const s=copy(state),ns=getNodes(s,ids);if(ns.length<2)throw Error('Selecciona al menos dos números para reunirlos.');if(!s.splits)throw Error('Abre alguna rama antes de reunir: queremos ver tu estrategia.');const expected=sum(ns.map(n=>n.value));if(!integer(answer)||answer!==expected)throw Error(`Revisa la suma de ${ns.map(n=>n.value).join(' + ')}. Las cantidades deben conservarse.`);const pos=place(s,sum(ns.map(n=>n.x))/ns.length,Math.max(...ns.map(n=>n.y))+120),n=node(s.serial++,answer,pos.x,pos.y,'group');for(const p of ns){p.active=false;s.edges.push([p.id,n.id])}s.nodes.push(n);s.log.push(`${ns.map(n=>n.value).join(' + ')} = ${answer}`);s.actions.push({type:'merge',ids,answer});return alignTree(s)}
 export function circleNode(state,id){const s=copy(state),[n]=getNodes(s,[id]);n.circled=!n.circled;s.actions.push({type:'circle',id});return s}
@@ -58,3 +86,4 @@ export function finishSack(state,answer,difference=null){const s=copy(state);if(
 
 export function createSackHunt(op){const base=sackAmounts(op),total=sum(base),approx=(op.level|| (op.digits===3?3:1))>=3,target=approx?Math.round(total/10)*10:total;const offsets=approx?[0,3,20]:[0,10,-1];const bags=offsets.map(delta=>{const values=[...base];values[0]+=delta;return values});const rotation=(op.a+op.b*3)%3;const arranged=bags.slice(rotation).concat(bags.slice(0,rotation));const correct=arranged.map((values,i)=>({values,i})).filter(({values})=>approx?Math.round(sum(values)/10)*10===target:sum(values)===target).map(({i})=>i);return {op,bags:arranged,approx,target,correct,finished:false,actions:[],log:[]}}
 export function solveSackHunt(state,ids){const s=copy(state);if(!Array.isArray(ids)||ids.length!==s.correct.length||new Set(ids).size!==ids.length||ids.some(id=>!Number.isInteger(id)||!s.correct.includes(id)))throw Error(s.approx?'Redondea el total de cada saco a decenas. Marca todos los que se aproximan a la meta.':'Suma las cantidades de cada saco. Elige el que tiene exactamente la cantidad de la meta.');s.finished=true;s.actions.push({type:'solveSackHunt',ids});s.log.push(...ids.map(i=>`Saco ${i+1}: ${s.bags[i].join(' + ')} = ${sum(s.bags[i])}`));return s}
+
