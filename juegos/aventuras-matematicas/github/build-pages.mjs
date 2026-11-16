@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 // Bust browser caches for the changed editor modules and interface styles.
-const VERSION = '20261116-geoboard-v12';
+const VERSION = '20261116-classroom-v13';
 const versionScripts = text => text.replace(/(['"])(\.\/[^'"]+\.js)\1/g, (m,q,file)=>q+file+'?v='+VERSION+q);
 
 const API = 'https://script.google.com/macros/s/AKfycbzmig6AICLgEwQEpHXZt1Mkgc3opXDwvyDG1hSLKZMzZMzZqyf4ALBCoiL9AyapN4YC/exec';
