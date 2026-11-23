@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ffd500">
+<meta name="theme-color" content="#004379">
 <meta name="description" content="Biblioteca de Matemáticas OAOA de Primaria: libros digitales y juegos de repaso.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="OAOA">
@@ -28,30 +28,6 @@ button{font:inherit}
   outline:3px solid #176e85;
   outline-offset:5px
 }
-header{
-  background:#ffd500;
-  border-bottom:1px solid #eac400
-}
-.head{
-  max-width:1100px;
-  margin:auto;
-  padding:24px;
-  display:flex;
-  gap:20px;
-  align-items:center
-}
-.head img{
-  width:94px;
-  height:94px;
-  border-radius:25px;
-  box-shadow:0 3px 8px #775d0020
-}
-h1{
-  font-size:clamp(1.5rem,4vw,2.35rem);
-  letter-spacing:-.04em;
-  margin:0
-}
-.head p{margin:7px 0 0;font-size:1rem}
 main{
   max-width:1100px;
   margin:auto;
@@ -264,9 +240,6 @@ iframe{
 body:has(dialog[open]){overflow:hidden}
 
 @media(max-width:700px){
-  .head{padding:20px;gap:14px;flex-wrap:wrap}
-  .head img{width:76px;height:76px;border-radius:20px}
-  .head p{font-size:.82rem}
   main{padding:25px 16px}
   .grid{
     grid-template-columns:repeat(2,minmax(0,1fr));
@@ -297,28 +270,37 @@ body:has(dialog[open]){overflow:hidden}
 </style>
 
 <style>
-.svp-portal-link { display:inline-flex; align-items:center; min-height:32px; padding:0 9px; border-radius:7px; border:1px solid currentColor; color:inherit; background:transparent; text-decoration:none; font:600 13px system-ui,sans-serif; }
-.svp-portal-link:hover { text-decoration:underline; }
-.svp-portal-link:focus-visible { outline:2px solid currentColor; outline-offset:2px; }
+</style>
+<style>
+.svp-app-header { background:#004379; color:white; border:0; padding:0; }
+.svp-app-header .svp-header-inner { box-sizing:border-box; max-width:1120px; margin:auto; padding:14px clamp(12px,4vw,28px); display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:clamp(9px,2.5vw,16px); }
+.svp-app-header .svp-header-icon { display:block; width:clamp(44px,9vw,64px); height:clamp(44px,9vw,64px); object-fit:cover; border-radius:50%; }
+.svp-app-header .svp-header-title { margin:0; color:inherit; font:700 clamp(1.1rem,4.6vw,1.75rem)/1.15 system-ui,sans-serif; letter-spacing:normal; overflow-wrap:anywhere; }
+.svp-app-header .svp-header-subtitle { margin:4px 0 0; color:#e2ecf5; font:400 .82rem/1.25 system-ui,sans-serif; }
+.svp-app-header .svp-header-actions { display:grid; justify-items:end; gap:4px; }
+.svp-app-header .svp-header-back, .svp-app-header .svp-header-refresh { box-sizing:border-box; display:grid; place-items:center; margin:0; padding:0; border:1px solid #ffffff66; background:transparent; color:white; font:600 .75rem/1 system-ui,sans-serif; text-decoration:none; cursor:pointer; }
+.svp-app-header .svp-header-back { width:44px; height:44px; border-radius:50%; font-size:1.2rem; }
+.svp-app-header .svp-header-refresh { min-height:30px; padding:0 6px; border-radius:8px; }
+.svp-app-header .svp-header-back:hover, .svp-app-header .svp-header-refresh:hover { background:#ffffff20; }
+.svp-app-header .svp-header-back:focus-visible, .svp-app-header .svp-header-refresh:focus-visible { outline:2px solid #ffcf55; outline-offset:2px; }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="head">
-    <img
-      src="assets/icon-matematicas-192.png"
-      alt="San Vicente con regletas Cuisenaire"
-      width="94"
-      height="94"
-    >
+<header class="svp-app-header">
+  <div class="svp-header-inner">
+    <img class="svp-header-icon" src="assets/icon-matematicas-192.png" alt="" width="64" height="64">
     <div>
-      <h1>OAOA · Biblioteca Digital</h1>
-      <p>Explora, piensa y descubre las matemáticas</p>
+      <h1 class="svp-header-title">OAOA · Biblioteca Digital</h1>
+      <p class="svp-header-subtitle">Explora, piensa y descubre las matemáticas</p>
+    </div>
+    <div class="svp-header-actions">
+      <a class="svp-header-back" href="https://svpaulcarapps.github.io/san-vicente-apps/" aria-label="Volver a todas las apps" title="Volver a todas las apps"><span aria-hidden="true">←</span></a>
+      <button class="svp-header-refresh" type="button" onclick="window.location.reload()">Recargar</button>
     </div>
   </div>
-<a class="svp-portal-link" href="https://svpaulcarapps.github.io/san-vicente-apps/">Todas las apps</a></header>
+</header>
 
 <main>
 
